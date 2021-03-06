@@ -9,8 +9,9 @@ def bootFakeSocket():
         s.bind((testSockHost, testSockPort))
     except socket.error as msg:
         print('socket bind failed, aborting ports test')
-        return
+        sys.exit()
     s.listen(10)
+    return s
 
 def test_ports():
     s = bootFakeSocket()    
