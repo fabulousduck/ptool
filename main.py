@@ -13,9 +13,13 @@ def main():
     parser.add_argument('-pk', '--portkill', action='store_true', help='kill the proc using a certail port')
     parser.add_argument('-n', '--network', action='store_true', help='prints all items on the network')
     parser.add_argument('-nf', '--networkfind', action='store_true', help='get info about a local network host given an ip')
-
+    
     args = parser.parse_args()
     
+    if not any(vars(args).values()):
+        parser.print_help()
+        sys.exit(1)
+
     if args.all:
         all()
     elif args.ports:
@@ -32,14 +36,6 @@ def main():
 def all():
     return
 
-#find a specific port with some proc running it
-def portfind(ret): 
-    return
-
-#kill a process with a given port
-def portkill():
-    return
-
 #format the netstat output and format to port list
 def handleNetstat(isWindowsWSL):
     ls = []
@@ -54,6 +50,17 @@ def handleNetstat(isWindowsWSL):
             ls.append((port,pid))
 
     return ls
+
+#find a specific port with some proc running it
+def portfind(ret):
+    ls = handleNetstat()
+
+    return
+
+#kill a process with a given port
+def portkill():
+    return
+
 
 #list all open ports and the pids for the procs using them
 def ports(ret):
@@ -78,9 +85,6 @@ def ports(ret):
     elif sys.platform == 'win32':
         print('Windows is currently not supported')
         return
-    
-    # procList  = [(int(port), command) for port,command in [x.rstrip('\n').split(' ', 1) for x in os.popen('ps h -eo pid:1,command')]]
-    # portList = [x for x in os.popen('ss -tulpn')]
 
     return
 
