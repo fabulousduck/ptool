@@ -1,6 +1,6 @@
 import argparse
-import sys
 import socket
+import sys
 import os
 
 def main():
@@ -40,19 +40,47 @@ def portfind(ret):
 def portkill():
     return
 
+#format the netstat output and format to port list
+def handleNetstat(isWindowsWSL):
+    ls = []
+    #workaround for WSL where base netstat doesnt work
+    baseCmd = 'netstat.exe' if isWindowsWSL else 'netstat'
+    netCmd = f'{baseCmd} -ano -p tcp'
+    for x in os.popen(netCmd):
+        n = list(filter(None,x.split(' ')))
+        if n[0] == 'TCP': 
+            port = n[1].split(':')[1]
+            pid = n[4]
+            ls.append((port,pid))
+
+    return ls
+
 #list all open ports and the pids for the procs using them
 def ports(ret):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(('127.0.01'))
 
-    procList  = [(int(port), command) for port,command in [x.rstrip('\n').split(' ', 1) for x in os.popen('ps h -eo pid:1,command')]]
-    portList = [x for x in os.popen('ss -tulpn')]
-
-    if len(portList) == 0:
-        print('No ports active.')
-        exit()
-
-    print(portList)
+    if sys.platform == 'linux' or platform == 'linux32':
+        #make sure we're on actual linux and not WSL
+        fp = open('/proc/version')
+        if 'Microsoft' in fp.read():
+            procPortList = handleNetstat(True)
+            if ret:
+                fp.close()
+                return procPortList
+            else:
+                for x in procPortList:
+                    print(f'port: {x[0]}, pid: {x[1]}')
+                fp.close()
+        else:
+            ports = handleNetstatPortList(False)
+    elif sys.platform == 'darwin':
+        print('OSX is currently not supported')
+        return
+    elif sys.platform == 'win32':
+        print('Windows is currently not supported')
+        return
+    
+    # procList  = [(int(port), command) for port,command in [x.rstrip('\n').split(' ', 1) for x in os.popen('ps h -eo pid:1,command')]]
+    # portList = [x for x in os.popen('ss -tulpn')]
 
     return
 
