@@ -1,0 +1,16 @@
+#!/bin/bash -e
+unamestr=$(uname)
+if [[ "$unamestr" == 'Linux' ]]; then
+  DIR=$(dirname $(readlink -f $0))
+elif [[ "$unamestr" == "Darwin" ]]; then
+  cmd=$(which "$0")
+  if [ -L "$cmd" ]; then
+    cmd=$(readlink "$cmd")
+  fi
+  DIR=$(dirname "$cmd")
+else
+  echo "Only Linux and Mac OS X are supported!"
+  exit
+fi
+
+exec python3 $DIR/main.py $*
