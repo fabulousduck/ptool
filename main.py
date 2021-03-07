@@ -9,7 +9,7 @@ def main():
     parser = argparse.ArgumentParser(prog='ptool', description='better prockiller')
     parser.add_argument('-a', '--all', action='store_true', help='print all available data')
     parser.add_argument('-p', '--ports', action='store_true', help='prints all ports and whats running on them')
-    parser.add_argument('-pf', '--portfind', action='store_true', help='finds a proc with a given port')
+    parser.add_argument('-pf', '--findPidWithPort', nargs='?',  help='finds a proc with a given port')
     parser.add_argument('-pk', '--portkill', action='store_true', help='kill the proc using a certail port')
     parser.add_argument('-n', '--network', action='store_true', help='prints all items on the network')
     parser.add_argument('-nf', '--networkfind', action='store_true', help='get info about a local network host given an ip')
@@ -30,8 +30,8 @@ def main():
         netfind(False)
     elif args.portkill:
         portkill(False)
-    elif args.portfind:
-        portfind(False)
+    elif args.findPidWithPort:
+        findPidWithPort(False, args.findPidWithPort)
 
 def all():
     return
@@ -45,17 +45,39 @@ def handleNetstat(isWindowsWSL):
     for x in os.popen(netCmd):
         n = list(filter(None,x.split(' ')))
         if n[0] == 'TCP': 
-            port = n[1].split(':')[1]
-            pid = n[4]
+            port = int(n[1].split(':')[1])
+            pid = int(n[4])
             ls.append((port,pid))
+    
+    ls.sort(key=lambda tup: tup[0])
 
     return ls
 
-#find a specific port with some proc running it
-def portfind(ret):
-    ls = handleNetstat()
+def isWSL():
+    if sys.platform == 'linux' or platform == 'linux32':
+        #make sure we're on actual linux and not WSL
+        fp = open('/proc/version')
+        if 'Microsoft' in fp.read():
+            return True
+    return False
 
-    return
+"""
+find a specific port with some proc running it
+returns (port, pid)
+if it finds nothing by that port, it returns (-1,-1)
+"""
+def findPidWithPort(ret, port):
+    ls = handleNetstat(isWSL())
+    for x in ls:
+        if ls[0] == port:
+            if ret:
+                return (port, pid)
+            else:
+                print(f'port: {x[0]}, pid: {x[1]}')
+                return
+    print(f'no active port {port}')
+
+    return (-1,-1)
 
 #kill a process with a given port
 def portkill():
@@ -75,7 +97,7 @@ def ports(ret):
                 return procPortList
             else:
                 for x in procPortList:
-                    print(f'port: {x[0]}, pid: {x[1]}')
+                    print(f'\tport: {x[0]}, pid: {x[1]}')
                 fp.close()
         else:
             ports = handleNetstatPortList(False)
