@@ -4,8 +4,6 @@ import sys
 import os
 
 def main():
-
-
     parser = argparse.ArgumentParser(prog='ptool', description='better prockiller')
     parser.add_argument('-a', '--all', action='store_true', help='print all available data')
     parser.add_argument('-p', '--ports', action='store_true', help='prints all ports and whats running on them')
@@ -69,7 +67,7 @@ if it finds nothing by that port, it returns (-1,-1)
 def findPidWithPort(ret, port):
     ls = handleNetstat(isWSL())
     for x in ls:
-        if ls[0] == port:
+        if int(x[0]) == int(port):
             if ret:
                 return (port, pid)
             else:
