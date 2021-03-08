@@ -106,10 +106,12 @@ def findPort(ret, arg):
 
     if len(printableList) < 1:
         print(f'No result for {arg}')
+        return (-1,-1)
 
     for port, pid, desc in printableList:
         port = 'NO PORT' if port == -1 else port
         print(f'PORT: {port}, PID: {pid}, DESC: {desc}')
+    return printableList
 
 #kill a process with a given port
 def portkill():

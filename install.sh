@@ -8,3 +8,5 @@ python3 test_main.py
 
 echo "symlinking"
 sudo ln -sf $(pwd)/ptool /usr/local/bin/ptool
+
+echo "Ptool install successful"
