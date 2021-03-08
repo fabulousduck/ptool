@@ -15,16 +15,17 @@ def bootTestSocket():
 
 def test_portfind():
     s = bootTestSocket()
-    res = main.findPidWithPort(True, 3002)
+    res = main.findPort(True, 3002)
     assert res != (-1,-1), "port 3002 not running"
     s.close()
+    print("portfind OK")
     return
 
 def test_ports():
     s = bootTestSocket()    
-    main.ports(True)
+    ret = main.ports(True)
     s.close()
-    
+    print("portlist OK")
     return
 
 
