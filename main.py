@@ -59,9 +59,10 @@ def handleNetstat(isWindowsWSL):
     for x in os.popen(netCmd):
         n = list(filter(None,x.split(' ')))
         if n[0] == 'TCP': 
-            port = int(n[2].split(':')[1])
+            internalPort = int(n[1].split(':')[1])
+            externalPort = int(n[2].split(':')[1])
             pid = int(n[4])
-            ls.append((port,pid, 'NO DESCRIPTION'))
+            ls.append((internalPort, externalPort, pid, 'NO DESCRIPTION'))
     
     ls.sort(key=lambda tup: tup[0])
 
@@ -86,28 +87,30 @@ def findPort(ret, arg):
     printableList = []
 
     for idx, (pid, desc) in enumerate(pidDescriptionList):
-        for i, (n, listPort, listPid) in enumerate(portPidList):
+        for i, (n, listInternalPort, listExternalPort, listPid) in enumerate(portPidList):
             if pid == listPid:
-                portPidList[i] = (listPid, ListPort, desc)
+                portPidList[i] = (listInternalPort, listExternalPort, ListPort, desc)
                 del pidDescriptionList[idx]
                 break
     
     for pid, desc in pidDescriptionList:
-        portPidList.append((-1, pid, desc))
+        portPidList.append((-1,-1, pid, desc))
 
-    for port, pid, desc in portPidList:
-        if isInt(arg) and int(port) == int(arg):
-            printableList.append((port,pid,desc))
+    for internalPort, externalPort, pid, desc in portPidList:
+        if isInt(arg) and (int(internalPort) == int(arg) or int(externalPort) == int(arg)):
+            printableList.append((internalPort, externalPort,pid,desc))
         elif not isInt(arg) and arg in desc:
-            printableList.append((port, pid, desc))
+            printableList.append((internalPort, externalPort, pid, desc))
 
     if len(printableList) < 1:
         print(f'No result for {arg}')
         return (-1,-1)
 
-    for port, pid, desc in printableList:
-        port = 'NO PORT' if port == -1 else port
-        print(f'PORT: {port}, PID: {pid}, DESC: {desc}')
+    for internalPort, externalPort, pid, desc in printableList:
+        internalPort = 'NO IPORT' if internalPort == -1 else internalPort
+        externalPort = 'NO IPORT' if externalPort == -1 else externalPort
+
+        print(f'IPORT: {internalPort}, EPORT: {externalPort} PID: {pid}, DESC: {desc}')
     return printableList
 
 #kill a process with a given port
@@ -128,7 +131,7 @@ def ports(ret):
                 return procPortList
             else:
                 for x in procPortList:
-                    print(f'\tport: {x[0]}, pid: {x[1]}')
+                    print(f'\tIport: {x[0]}, Eport: {x[1]} pid: {x[2]}')
                 fp.close()
         else:
             ports = handleNetstatPortList(False)
