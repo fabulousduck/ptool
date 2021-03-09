@@ -84,25 +84,22 @@ def findPort(ret, arg):
     portPidList = handleNetstat(isWSL())
     pidDescriptionList = getPidList("WSL")
     printableList = []
-    
 
     for idx, (pid, desc) in enumerate(pidDescriptionList):
-        for i, item in enumerate(portPidList):
-            if pid == item[0]:
-                portPidList[i] = (item[0], item[1], desc)
+        for i, (n, listPort, listPid) in enumerate(portPidList):
+            if pid == listPid:
+                portPidList[i] = (listPid, ListPort, desc)
                 del pidDescriptionList[idx]
                 break
+    
     for pid, desc in pidDescriptionList:
         portPidList.append((-1, pid, desc))
 
-    if isInt(arg):        
-        for port, pid, desc in portPidList:
-            if int(port) == int(arg):
-                printableList.append((port,pid,desc))
-    else:
-        for port, pid, desc in portPidList:
-            if arg in desc:
-                printableList.append((port, pid, desc))
+    for port, pid, desc in portPidList:
+        if isInt(arg) and int(port) == int(arg):
+            printableList.append((port,pid,desc))
+        elif not isInt(arg) and arg in desc:
+            printableList.append((port, pid, desc))
 
     if len(printableList) < 1:
         print(f'No result for {arg}')
