@@ -22,4 +22,4 @@ if __name__ == '__main__':
     test_ports()
     test_portfind()
     print(socketPid)
-    os.kill(socketPid, os.SIGTERM)
+    os.kill(socketPid.pid, signal.SIGTERM)

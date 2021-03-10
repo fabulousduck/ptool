@@ -150,6 +150,5 @@ def netfind(ret):
 def netscan(ret):
     return
 
-
 if __name__ == "__main__":
     main()
