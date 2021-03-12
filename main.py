@@ -11,6 +11,7 @@ def main():
     parser.add_argument('-pk', '--portkill', action='store_true', help='kill the proc using a certail port')
     parser.add_argument('-n', '--network', action='store_true', help='prints all items on the network')
     parser.add_argument('-nf', '--networkfind', action='store_true', help='get info about a local network host given an ip')
+    parser.add_argument('-s', '--sort', nargs='?', help='sort the output by column name')
     
     args = parser.parse_args()
     
@@ -21,15 +22,15 @@ def main():
     if args.all:
         all()
     elif args.ports:
-        ports(False)
+        ports(False, args.sort)
     elif args.network:
-        netscan(False)
+        netscan(False, args.sort)
     elif args.networkfind:
-        netfind(False)
+        netfind(False, args.sort)
     elif args.portkill:
         portkill(False)
     elif args.findPort:
-        findPort(False, args.findPort)
+        findPort(False, args.findPort, args.sort)
 
 def all():
     return
@@ -81,9 +82,10 @@ find a specific port with some proc running it
 returns (port, pid)
 if it finds nothing by that port, it returns (-1,-1)
 """
-def findPort(ret, arg):
+def findPort(ret, arg, sortOn):
     portPidList = handleNetstat(isWSL())
     pidDescriptionList = getPidList("WSL")
+    printableHeaderList = {'iport': 0, 'eport': 1, 'pid': 2}
     printableList = []
 
     for idx, (pid, desc) in enumerate(pidDescriptionList):
@@ -106,6 +108,13 @@ def findPort(ret, arg):
         print(f'No result for {arg}')
         return (-1,-1)
 
+    if sortOn:
+        if not sortOn in printableHeaderList.keys():
+            print(f'cannot sort port list by key {sortOn}\n permitted arguments are: iport, eport, pid')
+            return
+        printableList.sort(key=lambda x: x[printableHeaderList[sortOn]])
+
+
     for internalPort, externalPort, pid, desc in printableList:
         internalPort = 'NO IPORT' if internalPort == -1 else internalPort
         externalPort = 'NO IPORT' if externalPort == -1 else externalPort
@@ -119,20 +128,21 @@ def portkill():
 
 
 #list all open ports and the pids for the procs using them
-def ports(ret):
-
+def ports(ret, sortOn):
+    printableHeaderList = {'iport': 0, 'eport': 1, 'pid': 2}
     if sys.platform == 'linux' or platform == 'linux32':
-        #make sure we're on actual linux and not WSL
-        fp = open('/proc/version')
-        if 'Microsoft' in fp.read():
+        if isWSL():
             procPortList = handleNetstat(True)
             if ret:
-                fp.close()
                 return procPortList
             else:
+                if sortOn:
+                    if not sortOn in printableHeaderList.keys():
+                        print(f'cannot sort port list by key {sortOn}\n permitted arguments are: iport, eport, pid')
+                        return
+                    procPortList.sort(key=lambda x: x[printableHeaderList[sortOn]])
                 for x in procPortList:
                     print(f'\tIport: {x[0]}, Eport: {x[1]} pid: {x[2]}')
-                fp.close()
         else:
             ports = handleNetstatPortList(False)
     elif sys.platform == 'darwin':
@@ -144,10 +154,10 @@ def ports(ret):
 
     return
 
-def netfind(ret):
+def netfind(ret, sortOn):
     return
 
-def netscan(ret):
+def netscan(ret, sortOn):
     return
 
 if __name__ == "__main__":
