@@ -7,6 +7,6 @@ echo "running tests"
 python3 test_main.py
 
 echo "symlinking"
-sudo ln -sf $(pwd)/ptool /usr/local/bin/where
+sudo ln -sf $(pwd)/where /usr/local/bin/where
 
-echo "Ptool install successful"
+echo "Where install successful"
