@@ -1,6 +1,6 @@
-# PTOOL
+# Where
 
-Ptool is a small set of functions that make it easier to get information about sockets, pids, and the network you are on. It offers simple queries into combinations of information regarding sockets, processes, and the network.
+Where is a small set of functions that make it easier to get information about sockets, pids, and the network you are on. It offers simple queries into combinations of information regarding sockets, processes, and the network.
 
 ## Installing
 
@@ -8,8 +8,8 @@ Installing can be done by pasting the following commands into your terminal. (th
 This requires you to have git installed before you get started
 
 ```bash
-$ git clone git@github.com:fabulousduck/ptool.git
-$ cd ptool
+$ git clone git@github.com:fabulousduck/where.git
+$ cd Where
 $ chmod +x install.sh
 $ ./install.sh
 ```
@@ -17,13 +17,13 @@ $ ./install.sh
 To test if the install was successful, you can try the following command after the installer is finished.
 
 ```bash
-$ ptool -h
+$ where -h
 ```
 
 The following response should print to the screen.
 
 ```bash
-usage: ptool [-h] [-a] [-p] [-pf [FINDPORT]] [-pk] [-n] [-nf]
+usage: where [-h] [-a] [-p] [-pf [FINDPORT]] [-pk] [-n] [-nf]
 
 better prockiller
 

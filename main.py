@@ -4,7 +4,7 @@ import sys
 import os
 
 def main():
-    parser = argparse.ArgumentParser(prog='ptool', description='better prockiller')
+    parser = argparse.ArgumentParser(prog='where', description='better prockiller')
     parser.add_argument('-a', '--all', action='store_true', help='print all available data')
     parser.add_argument('-p', '--ports', action='store_true', help='prints all ports and whats running on them')
     parser.add_argument('-pf', '--findPort', nargs='?',  help='finds a proc with a given port or description')
