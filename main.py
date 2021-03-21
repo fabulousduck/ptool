@@ -8,7 +8,7 @@ def main():
     parser.add_argument('-a', '--all', action='store_true', help='print all available data')
     parser.add_argument('-p', '--ports', action='store_true', help='prints all ports and whats running on them')
     parser.add_argument('-pf', '--findPort', nargs='?',  help='finds a proc with a given port or description')
-    parser.add_argument('-pk', '--portkill', action='store_true', help='kill the proc using a certail port')
+    parser.add_argument('-pk', '--portkill', nargs='?', help='kill the proc using a certail port')
     parser.add_argument('-n', '--network', action='store_true', help='prints all items on the network')
     parser.add_argument('-nf', '--networkfind', action='store_true', help='get info about a local network host given an ip')
     parser.add_argument('-s', '--sort', nargs='?', help='sort the output by column name')
@@ -28,7 +28,7 @@ def main():
     elif args.networkfind:
         netfind(False, args.sort)
     elif args.portkill:
-        portkill(False)
+        portkill(False, args.portKill)
     elif args.findPort:
         findPort(False, args.findPort, args.sort)
 
@@ -123,7 +123,7 @@ def findPort(ret, arg, sortOn):
     return printableList
 
 #kill a process with a given port
-def portkill():
+def portkill(ret, port):
     return
 
 
